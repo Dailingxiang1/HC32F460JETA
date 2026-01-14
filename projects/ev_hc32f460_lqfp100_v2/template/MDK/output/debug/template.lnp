@@ -20,6 +20,15 @@
 ".\output\debug\lcd.o"
 ".\output\debug\lcd_init.o"
 ".\output\debug\da213.o"
+".\output\debug\test_pic.o"
+".\output\debug\micu_board.o"
+".\output\debug\bear.o"
+".\output\debug\cute_girl.o"
+".\output\debug\dog.o"
+".\output\debug\dragon.o"
+".\output\debug\monster.o"
+".\output\debug\mouse.o"
+".\output\debug\tree.o"
 --library_type=microlib --strict --scatter ".\config\linker\HC32F460xE.sct"
 --keep=*Handler --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

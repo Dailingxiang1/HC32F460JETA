@@ -27,6 +27,7 @@
 #include "DA213.h"
 #include "stdio.h"
 #include "string.h"
+#include "picture_def.h"
 /**
  * @addtogroup HC32F460_DDL_Examples
  * @{
@@ -54,9 +55,6 @@
  ******************************************************************************/
 static void BSP_CLK_Init(void);
 static void LCD_SPI_Config(void);
-static int32_t I2C_Master_Initialize(void);
-static int32_t I2C_Master_Transmit(uint16_t u16DevAddr, const uint8_t au8Data[], uint32_t u32Size, uint32_t u32Timeout);
-static int32_t I2C_Master_Receive(uint16_t u16DevAddr, uint8_t au8Data[], uint32_t u32Size, uint32_t u32Timeout);
 
 static void DMA_TransCompleteCallback(void)
 {
@@ -67,12 +65,77 @@ static void DMA_TransCompleteCallback(void)
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
+const uint32_t u32TestBuf[] __attribute__((section(".ex_rom"))) = 
+{ 
+    0x11223344UL, 
+    0xA1A2A3A4UL, 
+    0x55667788UL, 
+    0xE5E69900UL, 
+}; 
+
+const uint8_t* picture_ptr[] = {
+	test_pic,
+	micu_board_map,
+	pic_bear,
+	pic_cute_girl,
+	pic_dog,
+	pic_dragon,
+	pic_monster,
+	pic_mouse,
+	pic_tree
+};
+const uint8_t picture_num = sizeof(picture_ptr) / sizeof(picture_ptr[0]);
+
+void Picture_Loop_Task(void) {
+    static uint8_t current_index = 0;
+
+    while (1) {
+        // 1. 获取当前图片的指针
+        const uint8_t* current_pic_data = picture_ptr[current_index];
+
+        // 2. 刷屏 (240x320)
+        // 注意：因为数据在 .ex_rom，确保您的单片机开启了 Memory Mapped Mode (QSPI/SPI 映射模式)
+        // 否则直接指针访问会导致 HardFault
+        LCD_ShowImage(0, 0, 240, 320, current_pic_data);
+
+        // 3. 索引递增与循环
+        current_index++;
+        if (current_index >= picture_num) {
+            current_index = 0; // 回到第一张
+        }
+				GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
+        // 4. 延时 2 秒
+        SysTick_Delay(2000);
+    }
+}
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
- uint8_t spi_tx_data = 0x77;
 uint8_t chip_id;
+
+void On_Borad_Peripheral_Init()
+{
+		stc_gpio_init_t stcGpioInit;
+		GPIO_StructInit(&stcGpioInit);
+	
+		/* LCD背光、板载LED、震动马达初始化*/
+		stcGpioInit.u16PinState = PIN_STAT_RST;
+		stcGpioInit.u16PinDir = PIN_DIR_OUT;
+		
+		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
+		GPIO_Init(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN, &stcGpioInit);
+		GPIO_Init(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN, &stcGpioInit);
+	
+		/* 按键初始化 */
+		stcGpioInit.u16PullUp = PIN_PU_ON;
+		stcGpioInit.u16PinDir =  PIN_DIR_IN;
+	
+		GPIO_Init(LEFT_KEY1_PORT, LEFT_KEY1_PIN, &stcGpioInit);
+		GPIO_Init(LEFT_KEY2_PORT, LEFT_KEY2_PIN, &stcGpioInit);
+		GPIO_Init(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN, &stcGpioInit);
+		
+}
 /**
  * @brief  Main function of template project
  * @param  None
@@ -88,19 +151,12 @@ int32_t main(void)
 
 		BSP_CLK_Init();
 	
-		stc_gpio_init_t stcGpioInit;
-
-    GPIO_StructInit(&stcGpioInit);
-    stcGpioInit.u16PinState = PIN_STAT_RST;
-    stcGpioInit.u16PinDir = PIN_DIR_OUT;
-    //GPIO_Init(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN, &stcGpioInit);
-		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
+		SysTick_Init(1000);
+	
+		On_Borad_Peripheral_Init();
 	
 		LCD_SPI_Config();
 	
-		
-	
-		
 		LCD_Init();
 
 		DA213_Init();
@@ -117,20 +173,36 @@ int32_t main(void)
 		
 		short acc_x, acc_y, acc_z;
 		char temp_buff[21];
+		
+		
+		//Picture_Loop_Task();
+
+		
     /* Add your code here */
     for (;;) {
-				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
-        
-        
-        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
-				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_x: %d", acc_x);
-				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_y: %d", acc_x);
-				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_z: %d", acc_x);
-				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
-        DDL_DelayMS(100);
+			if(GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN) == PIN_RESET )
+				GPIO_SetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+			else
+				GPIO_ResetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+			
+			if(GPIO_ReadInputPins(LEFT_KEY1_PORT, LEFT_KEY1_PIN) == PIN_RESET)
+				GPIO_SetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
+			else
+				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
+//				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
+//        
+//        
+//        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
+//				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_x: %d", acc_x);
+//				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_y: %d", acc_x);
+//				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_z: %d", acc_x);
+//				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
+//        DDL_DelayMS(100);
+//				if(u32TestBuf[0] == 0x11223344UL)
+//					LCD_ShowString(0, 128, "EXFLASH READY", RED, BLUE, 32, 0) ;
     }
 }
 
@@ -273,112 +345,37 @@ static void LCD_SPI_Config(void)
 		SPI_Cmd(SPI_UNIT, ENABLE);
 }
 
-/**
- * @brief   Initialize the I2C peripheral for master
- * @param   None
- * @retval int32_t:
- *            - LL_OK:              Success
- **           - LL_ERR_INVD_PARAM:  Invalid parameter
- */
-static int32_t I2C_Master_Initialize(void)
+void SysTick_Handler(void)
 {
-    int32_t i32Ret;
-    stc_i2c_init_t stcI2cInit;
-    float32_t fErr;
+    SysTick_IncTick();
 
-		stc_gpio_init_t stcGpioInit;
-		(void)GPIO_StructInit(&stcGpioInit);
-		stcGpioInit.u16PinState = PIN_DIR_OUT;
-//		stcGpioInit.u16PullUp = PIN_PU_ON;
-//		stcGpioInit.u16PinAttr  = PIN_ATTR_DIGITAL;
-//		stcGpioInit.u16PinOutputType = PIN_OUT_TYPE_NMOS;
-//		(void)GPIO_Init(I2C_SCL_PORT, I2C_SCL_PIN, &stcGpioInit);
-//		(void)GPIO_Init(I2C_SDA_PORT, I2C_SDA_PIN, &stcGpioInit);
-		
-		GPIO_SetFunc(I2C_SCL_PORT, I2C_SCL_PIN, I2C_GPIO_SCL_FUNC);
-    GPIO_SetFunc(I2C_SDA_PORT, I2C_SDA_PIN, I2C_GPIO_SDA_FUNC);
-		FCG_Fcg1PeriphClockCmd(I2C_FCG_USE, ENABLE);
-    (void)I2C_DeInit(I2C_UNIT);
-
-    (void)I2C_StructInit(&stcI2cInit);
-    stcI2cInit.u32ClockDiv = I2C_CLK_DIV2;
-    stcI2cInit.u32Baudrate = I2C_BAUDRATE;
-    stcI2cInit.u32SclTime = 3UL;
-    i32Ret = I2C_Init(I2C_UNIT, &stcI2cInit, &fErr);
-
-    I2C_BusWaitCmd(I2C_UNIT, ENABLE);
-
-    return i32Ret;
+    __DSB();  /* Arm Errata 838869 */
 }
 
-/**
- * @brief  Master transmit data
- *
- * @param  [in] u16DevAddr          The slave address
- * @param  [in] au8Data             The data array
- * @param  [in] u32Size             Data size
- * @param  [in] u32Timeout          Time out count
- * @retval int32_t:
- *            - LL_OK:              Success
- *            - LL_ERR_TIMEOUT:     Time out
- */
-static int32_t I2C_Master_Transmit(uint16_t u16DevAddr, const uint8_t au8Data[], uint32_t u32Size, uint32_t u32Timeout)
+void SystemInit_QspiMem(void)
 {
-    int32_t i32Ret;
-    I2C_Cmd(I2C_UNIT, ENABLE);
-
-    I2C_SWResetCmd(I2C_UNIT, ENABLE);
-    I2C_SWResetCmd(I2C_UNIT, DISABLE);
-    i32Ret = I2C_Start(I2C_UNIT, u32Timeout);
-    if (LL_OK == i32Ret) {
-#if (I2C_ADDR_MD == I2C_ADDR_MD_10BIT)
-        i32Ret = I2C_Trans10BitAddr(I2C_UNIT, u16DevAddr, I2C_DIR_TX, u32Timeout);
-#else
-        i32Ret = I2C_TransAddr(I2C_UNIT, u16DevAddr, I2C_DIR_TX, u32Timeout);
-#endif
-
-        if (LL_OK == i32Ret) {
-            i32Ret = I2C_TransData(I2C_UNIT, au8Data, u32Size, u32Timeout);
-        }
-    }
-
-    (void)I2C_Stop(I2C_UNIT, u32Timeout);
-    I2C_Cmd(I2C_UNIT, DISABLE);
-
-    return i32Ret;
-}
-
-static int32_t I2C_Master_Receive(uint16_t u16DevAddr, uint8_t au8Data[], uint32_t u32Size, uint32_t u32Timeout)
-{
-    int32_t i32Ret;
-
-    I2C_Cmd(I2C_UNIT, ENABLE);
-    I2C_SWResetCmd(I2C_UNIT, ENABLE);
-    I2C_SWResetCmd(I2C_UNIT, DISABLE);
-    i32Ret = I2C_Start(I2C_UNIT, u32Timeout);
-    if (LL_OK == i32Ret) {
-        if (1UL == u32Size) {
-            I2C_AckConfig(I2C_UNIT, I2C_NACK);
-        }
-
-#if (I2C_ADDR_MD == I2C_ADDR_MD_10BIT)
-        i32Ret = I2C_Trans10BitAddr(I2C_UNIT, u16DevAddr, I2C_DIR_RX, u32Timeout);
-#else
-        i32Ret = I2C_TransAddr(I2C_UNIT, u16DevAddr, I2C_DIR_RX, u32Timeout);
-#endif
-
-        if (LL_OK == i32Ret) {
-            i32Ret = I2C_MasterReceiveDataAndStop(I2C_UNIT, au8Data, u32Size, u32Timeout);
-        }
-
-        I2C_AckConfig(I2C_UNIT, I2C_ACK);
-    }
-
-    if (LL_OK != i32Ret) {
-        (void)I2C_Stop(I2C_UNIT, u32Timeout);
-    }
-    I2C_Cmd(I2C_UNIT, DISABLE);
-    return i32Ret;
+    /* QSPI configure */
+    CM_GPIO->PWPR = 0xA501U;
+    /* High driver */
+    CM_GPIO->PCRB1  = 0x0020U;
+    CM_GPIO->PCRB14  = 0x0020U;
+    CM_GPIO->PCRB13  = 0x0020U;
+    CM_GPIO->PCRB12  = 0x0020U;
+    CM_GPIO->PCRB10 = 0x0020U;
+    CM_GPIO->PCRB2 = 0x0020U;
+    /* Set function */
+    CM_GPIO->PFSRB1  = 0x07U;
+    CM_GPIO->PFSRB14  = 0x07U;
+    CM_GPIO->PFSRB13  = 0x07U;
+    CM_GPIO->PFSRB12  = 0x07U;
+    CM_GPIO->PFSRB10 = 0x07U;
+    CM_GPIO->PFSRB2 = 0x07U;
+    /* qspi configure */
+    CM_PWC->FCG1 &= ~0x00000008UL;
+    //CM_QSPI->CR   = 0x0002000D;
+		CM_QSPI->CR   = 0x0001000D;
+    CM_QSPI->CSCR = 0x00000011;
+    CM_QSPI->FCR  = 0x00008332;
 }
 
 /*******************************************************************************

@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__DEBUG,HC32F460,USE_DDL_DRIVER,</Define>
+              <Define>__DEBUG,HC32F460,USE_DDL_DRIVER,ROM_EXT_QSPI</Define>
               <Undefine></Undefine>
-              <IncludePath>../source;../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include;../../../../drivers/cmsis/Include;../../../../drivers/hc32_ll_driver/inc;.\hardware\LCD;.\hardware\DA213</IncludePath>
+              <IncludePath>../source;../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include;../../../../drivers/cmsis/Include;../../../../drivers/hc32_ll_driver/inc;.\hardware\LCD;.\hardware\DA213;.\picture</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -518,6 +518,64 @@
               <FilePath>.\hardware\DA213\DA213.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>picture</GroupName>
+          <Files>
+            <File>
+              <FileName>test_pic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\test_pic.c</FilePath>
+            </File>
+            <File>
+              <FileName>picture_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\picture\picture_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>micu_board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\micu_board.c</FilePath>
+            </File>
+            <File>
+              <FileName>bear.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\bear.c</FilePath>
+            </File>
+            <File>
+              <FileName>cute_girl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\cute_girl.c</FilePath>
+            </File>
+            <File>
+              <FileName>dog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\dog.c</FilePath>
+            </File>
+            <File>
+              <FileName>dragon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\dragon.c</FilePath>
+            </File>
+            <File>
+              <FileName>monster.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\monster.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>Tree.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\Tree.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>middleware</GroupName>
         </Group>
       </Groups>
     </Target>
@@ -1033,6 +1091,64 @@
               <FilePath>.\hardware\DA213\DA213.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>picture</GroupName>
+          <Files>
+            <File>
+              <FileName>test_pic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\test_pic.c</FilePath>
+            </File>
+            <File>
+              <FileName>picture_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\picture\picture_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>micu_board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\micu_board.c</FilePath>
+            </File>
+            <File>
+              <FileName>bear.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\bear.c</FilePath>
+            </File>
+            <File>
+              <FileName>cute_girl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\cute_girl.c</FilePath>
+            </File>
+            <File>
+              <FileName>dog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\dog.c</FilePath>
+            </File>
+            <File>
+              <FileName>dragon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\dragon.c</FilePath>
+            </File>
+            <File>
+              <FileName>monster.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\monster.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>Tree.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\picture\Tree.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>middleware</GroupName>
         </Group>
       </Groups>
     </Target>

@@ -43,6 +43,61 @@ void LCD_Fill(u16 xsta, u16 ysta, u16 xend, u16 yend, u16 color)
     LCD_CS_Set();
 }
 
+/**
+ * @brief  显示图片 (RGB565格式)
+ * @param  x      起始X坐标
+ * @param  y      起始Y坐标
+ * @param  width  图片宽度
+ * @param  height 图片高度
+ * @param  pData  图片数据数组指针 (由LVGL Converter生成的uint8_t数组)
+ */
+void LCD_ShowImage(u16 x, u16 y, u16 width, u16 height, const uint8_t *pData)
+{
+    /* 1. 计算总像素点数 */
+    uint32_t total_point = (uint32_t)width * (uint32_t)height;
+    
+    /* 2. 设置显示区域窗口 
+       注意：跟你的LCD_Fill一样，终点坐标通常是 起点+宽度-1 */
+    LCD_Address_Set(x, y, x + width - 1, y + height - 1);
+
+    /* 3. 准备SPI传输 */
+    LCD_CS_Clr();
+    LCD_DC_Set();   /* Data command */
+
+    /* 4. 循环发送像素数据 */
+    for (uint32_t i = 0; i < total_point; i++)
+    {
+        /* 获取当前像素的高字节和低字节
+           假设数组格式为: [Hi0, Lo0, Hi1, Lo1, ...] 
+           如果显示的颜色不对（反色或错乱），可能需要交换 pData[i*2] 和 pData[i*2+1] 的位置
+        */
+        uint8_t hi = pData[i * 2 + 1];     // 偶数索引为高字节
+        uint8_t lo = pData[i * 2 ]; // 奇数索引为低字节
+
+        /* --- 发送高字节 --- */
+        while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_TX_BUF_EMPTY)) {
+            ; // 等待发送缓冲为空
+        }
+        SPI_WriteData(SPI_UNIT, (uint16_t)hi);
+
+        /* --- 发送低字节 --- */
+        while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_TX_BUF_EMPTY)) {
+            ; // 等待发送缓冲为空
+        }
+        SPI_WriteData(SPI_UNIT, (uint16_t)lo);
+    }
+
+    /* 5. 等待最后的传输完成并释放片选 */
+    while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_TX_BUF_EMPTY)) {
+        ;
+    }
+    while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_IDLE)) {
+        ;
+    }
+
+    LCD_CS_Set();
+}
+
 /******************************************************************************
       函数说明：在指定位置画点
       入口数据：x,y 画点坐标

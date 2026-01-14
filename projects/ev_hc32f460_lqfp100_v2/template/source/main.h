@@ -65,9 +65,6 @@
 #define LCD_BL_PORT 										(GPIO_PORT_B)
 #define LCD_BL_PIN                   		(GPIO_PIN_07)
 
-#define ON_BOARD_LED_PORT               (GPIO_PORT_B)
-#define ON_BOARD_LED_PIN                (GPIO_PIN_08)
-
 /* I2C definition */
 #define I2C_UNIT                        (CM_I2C1)
 #define I2C_FCG_USE                     (FCG1_PERIPH_I2C1)
@@ -84,8 +81,31 @@
 #define I2C_ADDR_MD_7BIT                (0U)
 #define I2C_ADDR_MD_10BIT               (1U)
 #define I2C_ADDR_MD                     (I2C_ADDR_MD_7BIT)
-#endif /* __MAIN_H__ */
 
+/* On Board LED */
+#define ON_BOARD_LED_PORT               (GPIO_PORT_B)
+#define ON_BOARD_LED_PIN                (GPIO_PIN_15)
+
+/* On Board Motor */
+#define ON_BOARD_MOTOR_PORT             (GPIO_PORT_B)
+#define ON_BOARD_MOTOR_PIN              (GPIO_PIN_08) 
+
+/* On Board KEYS*/
+#define LEFT_KEY1_PORT                  (GPIO_PORT_A)
+#define LEFT_KEY1_PIN                   (GPIO_PIN_05)
+
+#define LEFT_KEY2_PORT                  (GPIO_PORT_A)
+#define LEFT_KEY2_PIN                   (GPIO_PIN_06)
+
+#define RIGHT_KEY1_PORT                 (GPIO_PORT_A)
+#define RIGHT_KEY1_PIN                  (GPIO_PIN_04)
+
+/* Battery Detect PIN */
+#define BATTERY_DETECT_PORT             (GPIO_PORT_A)
+#define BATTERY_DETECT_PIN              (GPIO_PIN_00)
+
+
+#endif /* __MAIN_H__ */
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/

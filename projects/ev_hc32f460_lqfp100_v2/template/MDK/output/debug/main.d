@@ -33,3 +33,4 @@
 .\output\debug\main.o: .\hardware\DA213\DA213.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stdio.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\string.h
+.\output\debug\main.o: .\picture\picture_def.h
