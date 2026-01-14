@@ -1,4 +1,4 @@
-.\output\debug\hc32f460_ll_interrupts_share.o: ..\..\..\..\..\..\..\HC32F460_DDL_Rev3.3.0\HC32F460_DDL_Rev3.3.0\drivers\hc32_ll_driver\src\hc32f460_ll_interrupts_share.c
+.\output\debug\hc32f460_ll_interrupts_share.o: ..\..\..\..\drivers\hc32_ll_driver\src\hc32f460_ll_interrupts_share.c
 .\output\debug\hc32f460_ll_interrupts_share.o: ../../../../drivers/hc32_ll_driver/inc/hc32f460_ll_interrupts_share.h
 .\output\debug\hc32f460_ll_interrupts_share.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h
 .\output\debug\hc32f460_ll_interrupts_share.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stddef.h

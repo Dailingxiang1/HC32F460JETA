@@ -1,4 +1,4 @@
-.\output\debug\hc32_ll_i2c.o: ..\..\..\..\..\..\..\HC32F460_DDL_Rev3.3.0\HC32F460_DDL_Rev3.3.0\drivers\hc32_ll_driver\src\hc32_ll_i2c.c
+.\output\debug\hc32_ll_i2c.o: ..\..\..\..\drivers\hc32_ll_driver\src\hc32_ll_i2c.c
 .\output\debug\hc32_ll_i2c.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_i2c.h
 .\output\debug\hc32_ll_i2c.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h
 .\output\debug\hc32_ll_i2c.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stddef.h
