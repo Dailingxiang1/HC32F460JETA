@@ -82,6 +82,20 @@
 #define I2C_ADDR_MD_10BIT               (1U)
 #define I2C_ADDR_MD                     (I2C_ADDR_MD_7BIT)
 
+/* ADC definition*/
+#define ADC_UNIT                        (CM_ADC1)
+#define ADC_PERIPH_CLK                  (FCG3_PERIPH_ADC1)
+
+#define ADC_CH_POTENTIOMETER            (ADC_CH0)
+#define ADC_CH                          (ADC_CH_POTENTIOMETER)
+#define ADC_CH_PORT                     (GPIO_PORT_A)
+#define ADC_CH_PIN                      (GPIO_PIN_00)
+
+#define ADC_SEQ                         (ADC_SEQ_A)
+#define ADC_EOC_FLAG                    (ADC_FLAG_EOCA)
+
+#define ADC_VREF                        (3.3F)
+
 /* On Board LED */
 #define ON_BOARD_LED_PORT               (GPIO_PORT_B)
 #define ON_BOARD_LED_PIN                (GPIO_PIN_15)

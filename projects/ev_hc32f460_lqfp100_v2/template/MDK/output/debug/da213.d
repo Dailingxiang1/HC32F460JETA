@@ -15,6 +15,7 @@
 .\output\debug\da213.o: ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include/system_hc32f460.h
 .\output\debug\da213.o: ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include/hc32f4xx.h
 .\output\debug\da213.o: ../source/hc32f4xx_conf.h
+.\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h
@@ -26,6 +27,7 @@
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32f460_ll_interrupts_share.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h
+.\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_rtc.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_spi.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h
 .\output\debug\da213.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h

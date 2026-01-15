@@ -51,7 +51,7 @@ extern "C"
 #define LL_UTILITY_ENABLE                           (DDL_ON)
 #define LL_PRINT_ENABLE                             (DDL_OFF)
 
-#define LL_ADC_ENABLE                               (DDL_OFF)
+#define LL_ADC_ENABLE                               (DDL_ON)
 #define LL_AES_ENABLE                               (DDL_OFF)
 #define LL_AOS_ENABLE                               (DDL_ON)
 #define LL_CAN_ENABLE                               (DDL_OFF)
@@ -78,7 +78,7 @@ extern "C"
 #define LL_PWC_ENABLE                               (DDL_ON)
 #define LL_QSPI_ENABLE                              (DDL_OFF)
 #define LL_RMU_ENABLE                               (DDL_OFF)
-#define LL_RTC_ENABLE                               (DDL_OFF)
+#define LL_RTC_ENABLE                               (DDL_ON)
 #define LL_SDIOC_ENABLE                             (DDL_OFF)
 #define LL_SPI_ENABLE                               (DDL_ON)
 #define LL_SRAM_ENABLE                              (DDL_ON)

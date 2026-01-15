@@ -28,6 +28,10 @@
 #include "stdio.h"
 #include "string.h"
 #include "picture_def.h"
+
+#include "MultiTimer.h"
+#include "multi_button.h"
+
 /**
  * @addtogroup HC32F460_DDL_Examples
  * @{
@@ -86,6 +90,8 @@ const uint8_t* picture_ptr[] = {
 };
 const uint8_t picture_num = sizeof(picture_ptr) / sizeof(picture_ptr[0]);
 
+static Button left_bnt1, left_btn2, right_btn1;
+
 void Picture_Loop_Task(void) {
     static uint8_t current_index = 0;
 
@@ -103,7 +109,7 @@ void Picture_Loop_Task(void) {
         if (current_index >= picture_num) {
             current_index = 0; // 回到第一张
         }
-				GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
+				//GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
         // 4. 延时 2 秒
         SysTick_Delay(2000);
     }
@@ -134,7 +140,35 @@ void On_Borad_Peripheral_Init()
 		GPIO_Init(LEFT_KEY1_PORT, LEFT_KEY1_PIN, &stcGpioInit);
 		GPIO_Init(LEFT_KEY2_PORT, LEFT_KEY2_PIN, &stcGpioInit);
 		GPIO_Init(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN, &stcGpioInit);
+	
+		/* ADC电量检测初始化 */
+    stcGpioInit.u16PinAttr = PIN_ATTR_ANALOG;
+    GPIO_Init(ADC_CH_PORT, ADC_CH_PIN, &stcGpioInit);
 		
+}
+
+uint8_t read_button_gpio(uint8_t button_id)
+{
+    switch (button_id) {
+        case 1:
+            return !GPIO_ReadInputPins(LEFT_KEY1_PORT, LEFT_KEY1_PIN);
+        case 2:
+            return !GPIO_ReadInputPins(LEFT_KEY2_PORT, LEFT_KEY2_PIN);
+				case 3:
+						return !GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN);
+        default:
+            return 0;
+    }
+}
+
+void left1_btn_single_click_callback(Button* btn_handle)
+{
+		GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+}
+
+void left1_btn_double_click_callback(Button* btn_handle)
+{
+		GPIO_TogglePins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 }
 /**
  * @brief  Main function of template project
@@ -162,11 +196,18 @@ int32_t main(void)
 		DA213_Init();
 		
 		LL_PERIPH_WP(LL_PERIPH_ALL);
-		LCD_Fill(0, 0, 240, 320, BLUE);
-		LCD_ShowString(0, 0, "Hello World", RED, BLUE, 32, 0);
-		LCD_ShowString(0, 32, "Demo:", RED, BLUE, 32, 0);
-		LCD_ShowString(0, 64, "HC32F460JETA", RED, BLUE, 32, 0);
+
+		//multiTimerInstall();
+		button_init(&left_bnt1, read_button_gpio, 1, 1);
+		button_init(&left_btn2, read_button_gpio, 1, 2);
+		button_init(&right_btn1, read_button_gpio, 1, 3);
 		
+		button_attach(&left_bnt1, BTN_SINGLE_CLICK , left1_btn_single_click_callback);
+		button_attach(&left_bnt1, BTN_DOUBLE_CLICK , left1_btn_double_click_callback);
+		
+		button_start(&left_bnt1);
+		button_start(&left_btn2);
+		button_start(&right_btn1);
 		chip_id = DA213_ReadID();
 		
 		if(chip_id == 0x13) LCD_Fill(0, 0, 240, 320, BLUE);
@@ -180,15 +221,15 @@ int32_t main(void)
 		
     /* Add your code here */
     for (;;) {
-			if(GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN) == PIN_RESET )
-				GPIO_SetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-			else
-				GPIO_ResetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-			
-			if(GPIO_ReadInputPins(LEFT_KEY1_PORT, LEFT_KEY1_PIN) == PIN_RESET)
-				GPIO_SetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
-			else
-				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
+//			if(GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN) == PIN_RESET )
+//				GPIO_SetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+//			else
+//				GPIO_ResetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+//			
+//			if(GPIO_ReadInputPins(LEFT_KEY1_PORT, LEFT_KEY1_PIN) == PIN_RESET)
+//				GPIO_SetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
+//			else
+//				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 //				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
 //        
 //        
@@ -345,10 +386,14 @@ static void LCD_SPI_Config(void)
 		SPI_Cmd(SPI_UNIT, ENABLE);
 }
 
+static uint8_t button_ticks_5cnt;
 void SysTick_Handler(void)
 {
     SysTick_IncTick();
-
+		if(++button_ticks_5cnt > 3 ){
+			button_ticks();
+			button_ticks_5cnt = 0;
+		}
     __DSB();  /* Arm Errata 838869 */
 }
 

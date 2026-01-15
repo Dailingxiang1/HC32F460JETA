@@ -14,6 +14,7 @@
 .\output\debug\main.o: ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include/system_hc32f460.h
 .\output\debug\main.o: ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include/hc32f4xx.h
 .\output\debug\main.o: ../source/hc32f4xx_conf.h
+.\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h
@@ -25,6 +26,7 @@
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32f460_ll_interrupts_share.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h
+.\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_rtc.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_spi.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h
@@ -34,3 +36,5 @@
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stdio.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\string.h
 .\output\debug\main.o: .\picture\picture_def.h
+.\output\debug\main.o: .\middleware\MultiTimer\MultiTimer.h
+.\output\debug\main.o: .\middleware\MultiButton\multi_button.h
