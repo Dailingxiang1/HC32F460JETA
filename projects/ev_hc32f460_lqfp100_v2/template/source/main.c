@@ -60,10 +60,16 @@
 static void BSP_CLK_Init(void);
 static void LCD_SPI_Config(void);
 
+volatile uint8_t g_dma_transfer_complete = 0;
+
 static void DMA_TransCompleteCallback(void)
 {
-    /* 清除 DMA 通道传输完成标志 */
-    DMA_ClearTransCompleteStatus(DMA_UNIT, DMA_TX_INT_CH);
+    /* 检查是否是正确的通道触发 (防止误触发) */
+    if(DMA_GetTransCompleteStatus(DMA_UNIT, DMA_TX_INT_CH))
+    {
+        DMA_ClearTransCompleteStatus(DMA_UNIT, DMA_TX_INT_CH);
+        g_dma_transfer_complete = 1; /* 告知主循环：这一块发完了 */
+    }
 }
 
 /*******************************************************************************
@@ -77,43 +83,43 @@ const uint32_t u32TestBuf[] __attribute__((section(".ex_rom"))) =
     0xE5E69900UL, 
 }; 
 
-const uint8_t* picture_ptr[] = {
-	test_pic,
-	micu_board_map,
-	pic_bear,
-	pic_cute_girl,
-	pic_dog,
-	pic_dragon,
-	pic_monster,
-	pic_mouse,
-	pic_tree
-};
-const uint8_t picture_num = sizeof(picture_ptr) / sizeof(picture_ptr[0]);
+//const uint8_t* picture_ptr[] = {
+//	test_pic,
+//	micu_board_map,
+//	pic_bear,
+//	pic_cute_girl,
+//	pic_dog,
+//	pic_dragon,
+//	pic_monster,
+//	pic_mouse,
+//	pic_tree
+//};
+//const uint8_t picture_num = sizeof(picture_ptr) / sizeof(picture_ptr[0]);
 
 static Button left_bnt1, left_btn2, right_btn1;
 
-void Picture_Loop_Task(void) {
-    static uint8_t current_index = 0;
+//void Picture_Loop_Task(void) {
+//    static uint8_t current_index = 0;
 
-    while (1) {
-        // 1. 获取当前图片的指针
-        const uint8_t* current_pic_data = picture_ptr[current_index];
+//    while (1) {
+//        // 1. 获取当前图片的指针
+//        const uint8_t* current_pic_data = picture_ptr[current_index];
 
-        // 2. 刷屏 (240x320)
-        // 注意：因为数据在 .ex_rom，确保您的单片机开启了 Memory Mapped Mode (QSPI/SPI 映射模式)
-        // 否则直接指针访问会导致 HardFault
-        LCD_ShowImage(0, 0, 240, 320, current_pic_data);
+//        // 2. 刷屏 (240x320)
+//        // 注意：因为数据在 .ex_rom，确保您的单片机开启了 Memory Mapped Mode (QSPI/SPI 映射模式)
+//        // 否则直接指针访问会导致 HardFault
+//        LCD_ShowImage_DMA(0, 0, 240, 320, current_pic_data);
 
-        // 3. 索引递增与循环
-        current_index++;
-        if (current_index >= picture_num) {
-            current_index = 0; // 回到第一张
-        }
-				//GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
-        // 4. 延时 2 秒
-        SysTick_Delay(2000);
-    }
-}
+//        // 3. 索引递增与循环
+//        current_index++;
+//        if (current_index >= picture_num) {
+//            current_index = 0; // 回到第一张
+//        }
+//				//GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
+//        // 4. 延时 2 秒
+//        SysTick_Delay(2000);
+//    }
+//}
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -181,7 +187,9 @@ int32_t main(void)
     LL_PERIPH_WE(LL_PERIPH_ALL);
 		//只要SWD,不要JTAG
 		GPIO_SetDebugPort(GPIO_PIN_DEBUG, DISABLE);
+	
 		GPIO_SetDebugPort(GPIO_PIN_SWDIO | GPIO_PIN_SWCLK, ENABLE);
+		//GPIO_SetDebugPort(GPIO_PIN_SWO | GPIO_PIN_TRST, DISABLE) ;
 
 		BSP_CLK_Init();
 	
@@ -194,6 +202,42 @@ int32_t main(void)
 		LCD_Init();
 
 		DA213_Init();
+		
+		while(1){
+		LCD_ShowImage_DMA(0, 0, 240, 320, pic_bear);
+		//LCD_ShowImage(0, 0, 240, 320, pic_bear);
+		SysTick_Delay(100);
+		LCD_ShowImage_DMA(0, 0, 240, 320, pic_tree);
+		//LCD_ShowImage(0, 0, 240, 320, pic_tree);	
+		SysTick_Delay(100);
+		}
+		while(1)
+		{
+			
+			 if(g_dma_transfer_complete == 1)
+			 {
+					g_dma_transfer_complete = 0;
+				 
+					//SPI_Cmd(SPI_UNIT, DISABLE);
+					DMA_SetSrcAddr(DMA_UNIT, DMA_TX_CH, (uint32_t)test_pic);
+//					DMA_SetDestAddr(DMA_UNIT, DMA_TX_CH,(uint32_t)(&SPI_UNIT->DR));
+					DMA_SetBlockSize(DMA_UNIT, DMA_TX_CH, 1);
+					DMA_SetTransCount(DMA_UNIT, DMA_TX_CH, 1000);
+					
+				 //AOS_SetTriggerEventSrc(DMA_TX_TRIG_CH,  SPI_TX_EVT_SRC);
+					DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
+					AOS_SW_Trigger();
+					//SPI_Cmd(SPI_UNIT, ENABLE);
+					
+			 }
+		}
+		LCD_Fill(0, 0, 240, 320, WHITE);
+		//CM_DMA1->EN = 0; 
+
+/* 2. 暴力写入源地址 */
+		//CM_DMA1->SAR0 = (uint32_t)test_pic;
+
+//		LCD_ShowImage_DMA(0, 0, 240, 320, test_pic);
 		
 		LL_PERIPH_WP(LL_PERIPH_ALL);
 
@@ -216,9 +260,11 @@ int32_t main(void)
 		char temp_buff[21];
 		
 		
+		//DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
+		
 		//Picture_Loop_Task();
 
-		
+		 //LCD_Fill(0, 0, 240, 320, WHITE);
     /* Add your code here */
     for (;;) {
 //			if(GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN) == PIN_RESET )
@@ -230,18 +276,19 @@ int32_t main(void)
 //				GPIO_SetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 //			else
 //				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
-//				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
+				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
 //        
-//        
-//        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
-//				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_x: %d", acc_x);
-//				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_y: %d", acc_x);
-//				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_z: %d", acc_x);
-//				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
-//        DDL_DelayMS(100);
+//      
+				GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
+				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
+				sprintf(temp_buff, "Acc_x: %d", acc_x);
+				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
+				sprintf(temp_buff, "Acc_y: %d", acc_x);
+				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
+				sprintf(temp_buff, "Acc_z: %d", acc_x);
+				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
+        DDL_DelayMS(100);
 //				if(u32TestBuf[0] == 0x11223344UL)
 //					LCD_ShowString(0, 128, "EXFLASH READY", RED, BLUE, 32, 0) ;
     }
@@ -325,6 +372,7 @@ static void LCD_SPI_Config(void)
 	
     (void)GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16PinDrv       = PIN_HIGH_DRV;
+		stcGpioInit.u16PullUp       = PIN_PU_ON;
     //(void)GPIO_Init(LCD_SS_PORT,   LCD_SS_PIN,   &stcGpioInit);
     (void)GPIO_Init(LCD_SCK_PORT,  LCD_SCK_PIN,  &stcGpioInit);
     (void)GPIO_Init(LCD_MOSI_PORT, LCD_MOSI_PIN, &stcGpioInit);
@@ -356,20 +404,24 @@ static void LCD_SPI_Config(void)
     /* DMA configuration */
     FCG_Fcg0PeriphClockCmd(DMA_CLK, ENABLE);
     (void)DMA_StructInit(&stcDmaInit);
-    stcDmaInit.u32BlockSize  = 1UL;
-    stcDmaInit.u32TransCount = 10;
+    stcDmaInit.u32BlockSize  = 1;
+    stcDmaInit.u32TransCount = 1;
     stcDmaInit.u32DataWidth  = DMA_DATAWIDTH_8BIT;
 		
     /* Configure TX */
-    stcDmaInit.u32SrcAddrInc  = DMA_DEST_ADDR_FIX;
+    stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_INC;
     stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
     stcDmaInit.u32DestAddr    = (uint32_t)(&SPI_UNIT->DR);
+		stcDmaInit.u32SrcAddr     = (uint32_t)(test_pic);
 		stcDmaInit.u32IntEn      = DMA_INT_ENABLE;
     if (LL_OK != DMA_Init(DMA_UNIT, DMA_TX_CH, &stcDmaInit)) {
         for (;;) {
         }
     }
-    AOS_SetTriggerEventSrc(DMA_TX_TRIG_CH, SPI_TX_EVT_SRC);
+    AOS_SetTriggerEventSrc(DMA_TX_TRIG_CH,  SPI_TX_EVT_SRC);
+		
+		AOS_CommonTriggerCmd(DMA_TX_TRIG_CH, AOS_COMM_TRIG1, ENABLE);   //允许公共事件1触发
+		AOS_SetTriggerEventSrc(AOS_COMM_1, EVT_SRC_AOS_STRG) ;          //把公共事件1
 		
     /* DMA receive NVIC configure */
     stcIrqSignConfig.enIntSrc    = DMA_TX_INT_SRC;
@@ -380,10 +432,14 @@ static void LCD_SPI_Config(void)
     NVIC_SetPriority(stcIrqSignConfig.enIRQn, DDL_IRQ_PRIO_DEFAULT);
     NVIC_EnableIRQ(stcIrqSignConfig.enIRQn);
 		
-//    DMA_Cmd(DMA_UNIT, ENABLE);
-//    DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
+		DMA_Cmd(DMA_UNIT, ENABLE);
+    
+		
+		
+		//DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
 		
 		SPI_Cmd(SPI_UNIT, ENABLE);
+		//AOS_SW_Trigger();
 }
 
 static uint8_t button_ticks_5cnt;

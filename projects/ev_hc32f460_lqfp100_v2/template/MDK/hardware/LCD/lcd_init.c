@@ -170,7 +170,9 @@ void LCD_Init(void)
 		LCD_WR_DATA8(0x29);
 		LCD_WR_DATA8(0x32);
 	
-    LCD_WR_REG(0x21);      /* Display inversion ON（按你原工程） */
+    //LCD_WR_REG(0x21);      /* Display inversion ON（按你原工程） */
+		LCD_WR_REG(0x21);
+		
 
     LCD_WR_REG(0x11);
     delay_ms(120);

@@ -42,6 +42,88 @@ void LCD_Fill(u16 xsta, u16 ysta, u16 xend, u16 yend, u16 color)
 
     LCD_CS_Set();
 }
+/**
+ * @brief  配置并启动一次 DMA 传输
+ * @param  srcAddr: 源数据地址 (数组指针)
+ * @param  count:   本次传输的字节数 (最大 65535)
+ */
+static void LCD_DMA_Start(const uint8_t *srcAddr, uint32_t count)
+{
+    /* 1. 必须先关闭 DMA 通道才能修改配置 */
+    //DMA_Cmd(DMA_UNIT, ENABLE); // 确保DMA总开关是开的
+    DMA_ChCmd(DMA_UNIT, DMA_TX_CH, DISABLE);
+    
+    /* 2. 清除之前的传输完成标志 (非常重要，否则刚开启就进中断或认为完成了) */
+    //DMA_ClearTransCompleteStatus(DMA_UNIT, DMA_TX_CH);
+
+    /* 3.由此处重新配置源地址和传输长度 */
+    DMA_SetSrcAddr(DMA_UNIT, DMA_TX_CH, (uint32_t)srcAddr);
+    DMA_SetTransCount(DMA_UNIT, DMA_TX_CH, count);
+    
+    /* 4. 开启通道，传输立即开始 (因为 SPI TX 触发源一直连着) */
+    DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
+	
+		SPI_Cmd(SPI_UNIT, ENABLE);
+}
+extern volatile uint8_t g_dma_transfer_complete;
+/**
+ * @brief  DMA 刷屏函数
+ * @note   请确保 pData 里的字节序已经是 [高, 低, 高, 低...]，DMA 不会帮你交换！
+ */
+void LCD_ShowImage_DMA(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t *pData)
+{
+    uint32_t total_bytes = width * height * 2;
+    uint32_t sent_bytes = 0;
+    uint32_t current_block_size;
+
+    LCD_Address_Set(x, y, x + width - 1, y + height - 1);
+    LCD_CS_Clr();
+    LCD_DC_Set();
+
+    /* 初始化变量，防止第一次误判 */
+    g_dma_transfer_complete = 1;
+
+    while (sent_bytes < total_bytes)
+    {
+        /* 1. 计算块大小 */
+        if ((total_bytes - sent_bytes) > 60000)
+             current_block_size = 60000;
+        else
+             current_block_size = total_bytes - sent_bytes;
+
+        /* 2. 等待上一块完成 (依赖中断修改变量) */
+        while(g_dma_transfer_complete == 0);
+        g_dma_transfer_complete = 0; // 清零，准备发下一块
+
+        /* 3. 配置 DMA (必须先 Disable) */
+        DMA_ChCmd(DMA_UNIT, DMA_TX_CH, DISABLE);
+        
+        /* 注意：中断里已经清除了标志位，这里不需要再清，但为了保险可以再清一次 */
+        // DMA_ClearTransCompleteStatus(DMA_UNIT, DMA_TX_CH);
+
+        DMA_SetSrcAddr(DMA_UNIT, DMA_TX_CH, (uint32_t)(pData + sent_bytes));
+        DMA_SetTransCount(DMA_UNIT, DMA_TX_CH, current_block_size);
+        
+        /* 4. 开启 DMA */
+        DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
+        
+        /* 5. 【AOS软件触发】 踢一脚 */
+        /* 前提：你的初始化代码里配置了 COMEN 和 INTSFTTRG */
+        AOS_SW_Trigger();
+        
+        /* 6. 循环继续... CPU可以在这里干别的事，等待中断把 g_dma_transfer_complete 置 1 */
+        
+        sent_bytes += current_block_size;
+    }
+    
+    /* 7. 等待最后一块完成 */
+    while(g_dma_transfer_complete == 0);
+
+    /* 等待 SPI 发送空闲 */
+    while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_TX_BUF_EMPTY));
+    while (RESET == SPI_GetStatus(SPI_UNIT, SPI_FLAG_IDLE));
+    LCD_CS_Set();
+}
 
 /**
  * @brief  显示图片 (RGB565格式)

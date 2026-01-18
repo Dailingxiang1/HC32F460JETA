@@ -28,7 +28,7 @@
 #define SPI_UNIT                        (CM_SPI3)
 #define SPI_CLK                         (FCG1_PERIPH_SPI3)
 #define SPI_TX_EVT_SRC                  (EVT_SRC_SPI3_SPTI)
-#define SPI_RX_EVT_SRC                  (EVT_SRC_SPI3_SPRI)
+
 
 /* DMA definition */
 #define DMA_UNIT                        (CM_DMA1)
@@ -64,6 +64,7 @@
 /* BL = PB7 */
 #define LCD_BL_PORT 										(GPIO_PORT_B)
 #define LCD_BL_PIN                   		(GPIO_PIN_07)
+
 
 /* I2C definition */
 #define I2C_UNIT                        (CM_I2C1)

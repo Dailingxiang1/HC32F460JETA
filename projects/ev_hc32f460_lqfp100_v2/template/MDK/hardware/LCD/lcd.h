@@ -40,6 +40,7 @@ void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey);//œ‘
 void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[]);//œ‘ æÕº∆¨
 
 void LCD_ShowImage(u16 x, u16 y, u16 width, u16 height, const uint8_t *pData)  ;
+void LCD_ShowImage_DMA(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t *pData);
 
 //ª≠± —’…´
 #define WHITE         	 0xFFFF
