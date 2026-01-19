@@ -23,8 +23,6 @@ LR_IROM1 0x00000000 0x80000  {    ; load region size_region
 EX_QSPI_ROM 0x98000000 0x800000  {
     QSPI_ROM 0x98000000 0x800000  {
         *.o (.ex_rom)
-		;lv_*.o (+RO)
-		;lv_demo_music*.o (+RO)
 		lv_font*.o (+RO)
     }
 }

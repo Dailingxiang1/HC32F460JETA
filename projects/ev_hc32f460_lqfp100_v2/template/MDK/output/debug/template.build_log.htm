@@ -21,13 +21,30 @@ Target DLL:      Segger\JL2CM3.dll V2.99.45.0
 Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
-D:\MyProject\XHSC\test\HC32F460JETA\projects\ev_hc32f460_lqfp100_v2\template\MDK\template.uvprojx
+D:\MyProject\XHSC\HC32F460JETA\projects\ev_hc32f460_lqfp100_v2\template\MDK\template.uvprojx
 Project File Date:  01/19/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Software\Keil MDK\ARM\ARMCC\Bin'
 Build target 'template_Debug'
-".\output\debug\template.axf" - 0 Error(s), 0 Warning(s).
+compiling lcd.c...
+hardware\LCD\lcd.c(50): warning:  #177-D: function "LCD_DMA_Start"  was declared but never referenced
+  static void LCD_DMA_Start(const uint8_t *srcAddr, uint32_t count)
+hardware\LCD\lcd.c: 1 warning, 0 errors
+compiling lv_port_disp.c...
+lvgl\port\lv_port_disp.c(155): warning:  #1-D: last line of file ends without a newline
+  #endif
+lvgl\port\lv_port_disp.c: 1 warning, 0 errors
+compiling main.c...
+.\lvgl\Demo\lv_demo_ball.h(1): warning:  #1-D: last line of file ends without a newline
+  void lv_example_bouncing_ball(void);
+..\source\main.c(208): warning:  #177-D: variable "temp_buff"  was declared but never referenced
+  		char temp_buff[21];
+..\source\main.c: 2 warnings, 0 errors
+linking...
+Program Size: Code=153976 RO-data=408916 RW-data=1000 ZI-data=107024  
+FromELF: creating hex file...
+".\output\debug\template.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +57,7 @@ Package Vendor: HDSC
   D:/Software/Keil MDK/Pack/HDSC/HC32F460/1.0.11/Device/Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

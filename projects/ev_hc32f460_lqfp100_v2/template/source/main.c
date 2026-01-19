@@ -206,39 +206,12 @@ int32_t main(void)
 		
 		short acc_x, acc_y, acc_z;
 		char temp_buff[21];
-		
-		
-		//DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
-		
-		//Picture_Loop_Task();
 
-		 //LCD_Fill(0, 0, 240, 320, WHITE);
     /* Add your code here */
     for (;;) {
-//			if(GPIO_ReadInputPins(RIGHT_KEY1_PORT, RIGHT_KEY1_PIN) == PIN_RESET )
-//				GPIO_SetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-//			else
-//				GPIO_ResetPins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-//			
-//			if(GPIO_ReadInputPins(LEFT_KEY1_PORT, LEFT_KEY1_PIN) == PIN_RESET)
-//				GPIO_SetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
-//			else
-//				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
-//        
+        
 				lv_task_handler();
-//				GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-//        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
-//				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_x: %d", acc_x);
-//				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_y: %d", acc_x);
-//				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
-//				sprintf(temp_buff, "Acc_z: %d", acc_x);
-//				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
-//        DDL_DelayMS(100);
-//				if(u32TestBuf[0] == 0x11223344UL)
-//					LCD_ShowString(0, 128, "EXFLASH READY", RED, BLUE, 32, 0) ;
     }
 }
 

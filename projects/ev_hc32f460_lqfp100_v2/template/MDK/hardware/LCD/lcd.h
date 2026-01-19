@@ -42,7 +42,7 @@ void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[]);//ÏÔÊ¾Í¼Æ¬
 void LCD_ShowImage(u16 x, u16 y, u16 width, u16 height, const uint8_t *pData)  ;
 void LCD_ShowImage_DMA(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t *pData);
 
-void DMA_TransCompleteCallback(void);
+
 //»­±ÊÑÕÉ«
 #define WHITE         	 0xFFFF
 #define BLACK         	 0x0000	  
