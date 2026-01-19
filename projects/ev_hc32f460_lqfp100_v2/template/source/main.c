@@ -27,11 +27,14 @@
 #include "DA213.h"
 #include "stdio.h"
 #include "string.h"
-#include "picture_def.h"
 
 #include "MultiTimer.h"
 #include "multi_button.h"
 
+#include "lvgl.h"
+#include "lv_port_disp.h"
+#include "lv_demo_ball.h"
+#include "lv_demo_music.h"
 /**
  * @addtogroup HC32F460_DDL_Examples
  * @{
@@ -75,51 +78,9 @@ static void DMA_TransCompleteCallback(void)
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-const uint32_t u32TestBuf[] __attribute__((section(".ex_rom"))) = 
-{ 
-    0x11223344UL, 
-    0xA1A2A3A4UL, 
-    0x55667788UL, 
-    0xE5E69900UL, 
-}; 
 
-//const uint8_t* picture_ptr[] = {
-//	test_pic,
-//	micu_board_map,
-//	pic_bear,
-//	pic_cute_girl,
-//	pic_dog,
-//	pic_dragon,
-//	pic_monster,
-//	pic_mouse,
-//	pic_tree
-//};
-//const uint8_t picture_num = sizeof(picture_ptr) / sizeof(picture_ptr[0]);
 
 static Button left_bnt1, left_btn2, right_btn1;
-
-//void Picture_Loop_Task(void) {
-//    static uint8_t current_index = 0;
-
-//    while (1) {
-//        // 1. 获取当前图片的指针
-//        const uint8_t* current_pic_data = picture_ptr[current_index];
-
-//        // 2. 刷屏 (240x320)
-//        // 注意：因为数据在 .ex_rom，确保您的单片机开启了 Memory Mapped Mode (QSPI/SPI 映射模式)
-//        // 否则直接指针访问会导致 HardFault
-//        LCD_ShowImage_DMA(0, 0, 240, 320, current_pic_data);
-
-//        // 3. 索引递增与循环
-//        current_index++;
-//        if (current_index >= picture_num) {
-//            current_index = 0; // 回到第一张
-//        }
-//				//GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_08 | GPIO_PIN_15);
-//        // 4. 延时 2 秒
-//        SysTick_Delay(2000);
-//    }
-//}
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -176,6 +137,25 @@ void left1_btn_double_click_callback(Button* btn_handle)
 {
 		GPIO_TogglePins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 }
+
+/**
+ * @brief  简单的 UI 测试函数：在屏幕中间显示一行字
+ */
+void lv_example_hello_world(void)
+{
+    /* 获取当前活动屏幕 */
+    lv_obj_t * scrub = lv_scr_act();
+
+    /* 1. 创建一个按钮对象 */
+    lv_obj_t * btn = lv_btn_create(scrub);
+    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0); // 居中显示
+    lv_obj_set_size(btn, 120, 50);            // 设置大小
+
+    /* 2. 在按钮上创建一个标签 */
+    lv_obj_t * label = lv_label_create(btn);
+    lv_label_set_text(label, "Hello HC32!");  // 设置文字
+    lv_obj_center(label);                     // 文字居中
+}
 /**
  * @brief  Main function of template project
  * @param  None
@@ -199,46 +179,14 @@ int32_t main(void)
 	
 		LCD_SPI_Config();
 	
-		LCD_Init();
-
+		//LCD_Init();
+		lv_init();
+		lv_port_disp_init();
+		//lv_example_hello_world();
 		DA213_Init();
 		
-		while(1){
-		LCD_ShowImage_DMA(0, 0, 240, 320, pic_bear);
-		//LCD_ShowImage(0, 0, 240, 320, pic_bear);
-		SysTick_Delay(100);
-		LCD_ShowImage_DMA(0, 0, 240, 320, pic_tree);
-		//LCD_ShowImage(0, 0, 240, 320, pic_tree);	
-		SysTick_Delay(100);
-		}
-		while(1)
-		{
-			
-			 if(g_dma_transfer_complete == 1)
-			 {
-					g_dma_transfer_complete = 0;
-				 
-					//SPI_Cmd(SPI_UNIT, DISABLE);
-					DMA_SetSrcAddr(DMA_UNIT, DMA_TX_CH, (uint32_t)test_pic);
-//					DMA_SetDestAddr(DMA_UNIT, DMA_TX_CH,(uint32_t)(&SPI_UNIT->DR));
-					DMA_SetBlockSize(DMA_UNIT, DMA_TX_CH, 1);
-					DMA_SetTransCount(DMA_UNIT, DMA_TX_CH, 1000);
-					
-				 //AOS_SetTriggerEventSrc(DMA_TX_TRIG_CH,  SPI_TX_EVT_SRC);
-					DMA_ChCmd(DMA_UNIT, DMA_TX_CH, ENABLE);
-					AOS_SW_Trigger();
-					//SPI_Cmd(SPI_UNIT, ENABLE);
-					
-			 }
-		}
-		LCD_Fill(0, 0, 240, 320, WHITE);
-		//CM_DMA1->EN = 0; 
-
-/* 2. 暴力写入源地址 */
-		//CM_DMA1->SAR0 = (uint32_t)test_pic;
-
-//		LCD_ShowImage_DMA(0, 0, 240, 320, test_pic);
-		
+		lv_demo_music();
+		//lv_example_bouncing_ball();
 		LL_PERIPH_WP(LL_PERIPH_ALL);
 
 		//multiTimerInstall();
@@ -254,7 +202,7 @@ int32_t main(void)
 		button_start(&right_btn1);
 		chip_id = DA213_ReadID();
 		
-		if(chip_id == 0x13) LCD_Fill(0, 0, 240, 320, BLUE);
+		//if(chip_id == 0x13) LCD_Fill(0, 0, 240, 320, BLUE);
 		
 		short acc_x, acc_y, acc_z;
 		char temp_buff[21];
@@ -278,17 +226,17 @@ int32_t main(void)
 //				GPIO_ResetPins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
 				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
 //        
-//      
-				GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
-        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
-				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_x: %d", acc_x);
-				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_y: %d", acc_x);
-				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
-				sprintf(temp_buff, "Acc_z: %d", acc_x);
-				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
-        DDL_DelayMS(100);
+				lv_task_handler();
+//				GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+//        sprintf(temp_buff, "SensorID: 0x%02X", chip_id);
+//				LCD_ShowString(0, 0, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_x: %d", acc_x);
+//				LCD_ShowString(0, 32, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_y: %d", acc_x);
+//				LCD_ShowString(0, 64, temp_buff, RED, BLUE, 32, 0) ;
+//				sprintf(temp_buff, "Acc_z: %d", acc_x);
+//				LCD_ShowString(0, 96, temp_buff, RED, BLUE, 32, 0) ;
+//        DDL_DelayMS(100);
 //				if(u32TestBuf[0] == 0x11223344UL)
 //					LCD_ShowString(0, 128, "EXFLASH READY", RED, BLUE, 32, 0) ;
     }
@@ -412,7 +360,7 @@ static void LCD_SPI_Config(void)
     stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_INC;
     stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
     stcDmaInit.u32DestAddr    = (uint32_t)(&SPI_UNIT->DR);
-		stcDmaInit.u32SrcAddr     = (uint32_t)(test_pic);
+		stcDmaInit.u32SrcAddr     = 0;
 		stcDmaInit.u32IntEn      = DMA_INT_ENABLE;
     if (LL_OK != DMA_Init(DMA_UNIT, DMA_TX_CH, &stcDmaInit)) {
         for (;;) {
@@ -420,7 +368,7 @@ static void LCD_SPI_Config(void)
     }
     AOS_SetTriggerEventSrc(DMA_TX_TRIG_CH,  SPI_TX_EVT_SRC);
 		
-		AOS_CommonTriggerCmd(DMA_TX_TRIG_CH, AOS_COMM_TRIG1, ENABLE);   //允许公共事件1触发
+		AOS_CommonTriggerCmd(DMA_TX_TRIG_CH, AOS_COMM_TRIG1, ENABLE);   //允许公共事件1触发 DMA1通道0的触发
 		AOS_SetTriggerEventSrc(AOS_COMM_1, EVT_SRC_AOS_STRG) ;          //把公共事件1
 		
     /* DMA receive NVIC configure */
@@ -446,6 +394,7 @@ static uint8_t button_ticks_5cnt;
 void SysTick_Handler(void)
 {
     SysTick_IncTick();
+		lv_tick_inc(1);
 		if(++button_ticks_5cnt > 3 ){
 			button_ticks();
 			button_ticks_5cnt = 0;
