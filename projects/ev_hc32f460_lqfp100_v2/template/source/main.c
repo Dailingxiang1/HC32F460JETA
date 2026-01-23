@@ -25,6 +25,8 @@
 #include "lcd_init.h"
 #include "lcd.h"
 #include "DA213.h"
+#include "LED.h"
+
 #include "stdio.h"
 #include "string.h"
 
@@ -96,8 +98,8 @@ void On_Borad_Peripheral_Init()
 		stcGpioInit.u16PinState = PIN_STAT_RST;
 		stcGpioInit.u16PinDir = PIN_DIR_OUT;
 		
+		LED_Init();
 		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
-		GPIO_Init(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN, &stcGpioInit);
 		GPIO_Init(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN, &stcGpioInit);
 	
 		/* 按键初始化 */
@@ -184,8 +186,38 @@ int32_t main(void)
 		lv_port_disp_init();
 		//lv_example_hello_world();
 		DA213_Init();
-		
-		lv_demo_music();
+		uint8_t brightness = 0;      // 当前亮度值(0-100)
+		int8_t direction = 1;        // 亮度变化方向: 1表示增加，-1表示减少
+		uint32_t last_time = 0;      // 上次更新时间
+		uint32_t interval_ms = 50;   // 渐变间隔时间(毫秒)
+		while(1)
+		{
+    // 检查是否到达更新时间
+    if(SysTick_GetTick() - last_time >= interval_ms)
+    {
+        // 更新亮度值
+        brightness += direction;
+        
+        // 边界检查，到达100%或0%时改变方向
+        if(brightness >= 100)
+        {
+            brightness = 100;
+            direction = -1;  // 改为渐暗
+        }
+        else if(brightness <= 0)
+        {
+            brightness = 0;
+            direction = 1;   // 改为渐亮
+        }
+        
+        // 设置LED亮度
+        LED_Set_Light(brightness);
+        
+        // 更新上次时间
+        last_time = SysTick_GetTick();
+    }
+		}
+		//lv_demo_music();
 		//lv_example_bouncing_ball();
 		LL_PERIPH_WP(LL_PERIPH_ALL);
 

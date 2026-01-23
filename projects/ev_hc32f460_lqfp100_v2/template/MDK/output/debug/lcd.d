@@ -30,6 +30,7 @@
 .\output\debug\lcd.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_rtc.h
 .\output\debug\lcd.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_spi.h
 .\output\debug\lcd.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h
+.\output\debug\lcd.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h
 .\output\debug\lcd.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h
 .\output\debug\lcd.o: hardware\LCD\lcd_init.h
 .\output\debug\lcd.o: hardware\LCD\lcdfont.h
