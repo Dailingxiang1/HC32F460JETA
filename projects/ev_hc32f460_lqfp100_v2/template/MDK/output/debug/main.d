@@ -30,11 +30,13 @@
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_spi.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h
+.\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h
 .\output\debug\main.o: ../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h
 .\output\debug\main.o: .\hardware\LCD\lcd_init.h
 .\output\debug\main.o: .\hardware\LCD\lcd.h
 .\output\debug\main.o: .\hardware\DA213\DA213.h
 .\output\debug\main.o: .\hardware\LED\LED.h
+.\output\debug\main.o: .\hardware\MOTOR\Motor.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stdio.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\string.h
 .\output\debug\main.o: .\middleware\MultiTimer\MultiTimer.h

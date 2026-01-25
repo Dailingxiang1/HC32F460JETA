@@ -26,6 +26,7 @@
 #include "lcd.h"
 #include "DA213.h"
 #include "LED.h"
+#include "Motor.h"
 
 #include "stdio.h"
 #include "string.h"
@@ -88,6 +89,10 @@ static Button left_bnt1, left_btn2, right_btn1;
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 uint8_t chip_id;
+lv_obj_t * label_chip;
+lv_obj_t * label_accx;
+lv_obj_t * label_accy;
+lv_obj_t * label_accz;
 
 void On_Borad_Peripheral_Init()
 {
@@ -99,6 +104,7 @@ void On_Borad_Peripheral_Init()
 		stcGpioInit.u16PinDir = PIN_DIR_OUT;
 		
 		LED_Init();
+		MOTOR_Init();
 		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
 		GPIO_Init(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN, &stcGpioInit);
 	
@@ -182,43 +188,13 @@ int32_t main(void)
 		LCD_SPI_Config();
 	
 		//LCD_Init();
-		lv_init();
+		lv_init();                                 
 		lv_port_disp_init();
 		//lv_example_hello_world();
 		DA213_Init();
-		uint8_t brightness = 0;      // 当前亮度值(0-100)
-		int8_t direction = 1;        // 亮度变化方向: 1表示增加，-1表示减少
-		uint32_t last_time = 0;      // 上次更新时间
-		uint32_t interval_ms = 50;   // 渐变间隔时间(毫秒)
-		while(1)
-		{
-    // 检查是否到达更新时间
-    if(SysTick_GetTick() - last_time >= interval_ms)
-    {
-        // 更新亮度值
-        brightness += direction;
-        
-        // 边界检查，到达100%或0%时改变方向
-        if(brightness >= 100)
-        {
-            brightness = 100;
-            direction = -1;  // 改为渐暗
-        }
-        else if(brightness <= 0)
-        {
-            brightness = 0;
-            direction = 1;   // 改为渐亮
-        }
-        
-        // 设置LED亮度
-        LED_Set_Light(brightness);
-        
-        // 更新上次时间
-        last_time = SysTick_GetTick();
-    }
-		}
+
 		//lv_demo_music();
-		//lv_example_bouncing_ball();
+		lv_example_bouncing_ball();
 		LL_PERIPH_WP(LL_PERIPH_ALL);
 
 		//multiTimerInstall();
@@ -235,14 +211,49 @@ int32_t main(void)
 		chip_id = DA213_ReadID();
 		
 		//if(chip_id == 0x13) LCD_Fill(0, 0, 240, 320, BLUE);
-		
+		lv_obj_t * scr = lv_scr_act();
+
+		// Chip ID
+		label_chip = lv_label_create(scr);
+		lv_obj_align(label_chip, LV_ALIGN_TOP_MID, 0, 10);
+
+		// acc X
+		label_accx = lv_label_create(scr);
+		lv_obj_align(label_accx, LV_ALIGN_TOP_LEFT, 10, 40);
+
+		// acc Y
+		label_accy = lv_label_create(scr);
+		lv_obj_align(label_accy, LV_ALIGN_TOP_LEFT, 10, 70);
+
+		// acc Z
+		label_accz = lv_label_create(scr);
+		lv_obj_align(label_accz, LV_ALIGN_TOP_LEFT, 10, 100);
+
+		// Set default texts
+		lv_label_set_text(label_chip, "chip_id: --");
+		lv_label_set_text(label_accx, "X: --");
+		lv_label_set_text(label_accy, "Y: --");
+		lv_label_set_text(label_accz, "Z: --");
 		short acc_x, acc_y, acc_z;
 		char temp_buff[21];
-
+		uint32_t last_update_ms = 0;
     /* Add your code here */
     for (;;) {
-				DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
-        
+    uint32_t now = SysTick_GetTick();  // 获取当前系统毫秒
+
+    // 每 1000ms 更新一次显示
+    if (now - last_update_ms >= 1000) {
+        last_update_ms = now;
+
+        // 读取传感器
+        DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
+
+        // 更新 LVGL 的标签文本
+        lv_label_set_text_fmt(label_chip, "chip: 0x%02X", chip_id);
+        lv_label_set_text_fmt(label_accx, "acc X: %d", acc_x);
+        lv_label_set_text_fmt(label_accy, "acc Y: %d", acc_y);
+        lv_label_set_text_fmt(label_accz, "acc Z: %d", acc_z);
+    }
 				lv_task_handler();
     }
 }
@@ -405,6 +416,7 @@ void SysTick_Handler(void)
 			button_ticks_5cnt = 0;
 		}
     __DSB();  /* Arm Errata 838869 */
+		
 }
 
 void SystemInit_QspiMem(void)
