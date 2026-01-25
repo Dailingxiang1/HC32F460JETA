@@ -47,6 +47,8 @@ void MOTOR_Init()
 		TmrAConfig();
 	
 		TMRA_SetCompareValue(TMRA_UNIT, TMRA_PWM_CH, 0);
+	
+		//TMRA_Start(TMRA_UNIT);
 }
 
 /**

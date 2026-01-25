@@ -14,7 +14,7 @@ I (../../../../drivers/cmsis/Include/cmsis_compiler.h)(0x696DE2CB)
 I (../../../../drivers/cmsis/Include/cmsis_armcc.h)(0x696DE2CB)
 I (../../../../drivers/cmsis/Include/mpu_armv7.h)(0x696DE2CB)
 I (../source/hc32f4xx_conf.h)(0x6976011E)
-F (..\source\main.c)(0x69760335)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\main.o --omf_browse .\output\debug\main.crf --depend .\output\debug\main.d)
+F (..\source\main.c)(0x69761F83)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\main.o --omf_browse .\output\debug\main.crf --depend .\output\debug\main.d)
 I (..\source\main.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h)(0x696DE2CB)
@@ -47,7 +47,7 @@ I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h)(0x696DE2CB)
-I (.\hardware\LCD\lcd_init.h)(0x696DE2CB)
+I (.\hardware\LCD\lcd_init.h)(0x697613DE)
 I (.\hardware\LCD\lcd.h)(0x696DE3A6)
 I (.\hardware\DA213\DA213.h)(0x696DE2CB)
 I (.\hardware\LED\LED.h)(0x6972EDA4)
@@ -521,10 +521,10 @@ I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h)(0x696DE2CB)
-I (hardware\LCD\lcd_init.h)(0x696DE2CB)
+I (hardware\LCD\lcd_init.h)(0x697613DE)
 I (hardware\LCD\lcdfont.h)(0x696DE2CB)
-F (.\hardware\LCD\lcd_init.c)(0x696DE2CB)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\lcd_init.o --omf_browse .\output\debug\lcd_init.crf --depend .\output\debug\lcd_init.d)
-I (hardware\LCD\lcd_init.h)(0x696DE2CB)
+F (.\hardware\LCD\lcd_init.c)(0x69761FED)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\lcd_init.o --omf_browse .\output\debug\lcd_init.crf --depend .\output\debug\lcd_init.d)
+I (hardware\LCD\lcd_init.h)(0x697613DE)
 I (D:\Software\Keil MDK\ARM\ARMCC\include\stdint.h)(0x599ECD2E)
 I (../source/main.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll.h)(0x696DE2CB)
@@ -625,7 +625,7 @@ I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h)(0x696DE2CB)
-F (.\hardware\MOTOR\MOTOR.c)(0x697602F5)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\motor.o --omf_browse .\output\debug\motor.crf --depend .\output\debug\motor.d)
+F (.\hardware\MOTOR\MOTOR.c)(0x69760B46)(--c99 -c --cpu Cortex-M4 -D__MICROLIB --li -g -O3 --apcs=interwork --split_sections -I ../source -I ../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include -I ../../../../drivers/cmsis/Include -I ../../../../drivers/hc32_ll_driver/inc -I .\hardware\LCD -I .\hardware\DA213 -I .\picture -I .\middleware\MultiButton -I .\middleware\MultiTimer -I .\lvgl -I .\lvgl\src -I .\lvgl\port -I .\lvgl\Demo -I .\lvgl\Demo\music -I .\hardware\LED -I .\hardware\MOTOR-I"D:\Software\Keil MDK\Pack\HDSC\HC32F460\1.0.11\Device\Include"-D__UVISION_VERSION="543" -D__DEBUG -DHC32F460 -DUSE_DDL_DRIVER -DROM_EXT_QSPI -DLV_CONF_INCLUDE_SIMPLE -DLV_LVGL_H_INCLUDE_SIMPLE-o .\output\debug\motor.o --omf_browse .\output\debug\motor.crf --depend .\output\debug\motor.d)
 I (hardware\MOTOR\MOTOR.h)(0x697602ED)
 I (../source/main.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll.h)(0x696DE2CB)
@@ -7255,7 +7255,7 @@ I (.\lvgl\src/extra/widgets/colorwheel/lv_colorwheel.h)(0x696DE358)
 I (.\lvgl\src/extra/widgets/led/lv_led.h)(0x696DE358)
 I (.\lvgl\src/extra/widgets/imgbtn/lv_imgbtn.h)(0x696DE358)
 I (.\lvgl\src/extra/widgets/span/lv_span.h)(0x696DE358)
-I (.\hardware\LCD\lcd_init.h)(0x696DE2CB)
+I (.\hardware\LCD\lcd_init.h)(0x697613DE)
 I (../source/main.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll.h)(0x696DE2CB)
 I (../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h)(0x696DE2CB)

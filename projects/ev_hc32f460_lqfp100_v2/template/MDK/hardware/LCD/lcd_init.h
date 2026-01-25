@@ -84,5 +84,7 @@ void LCD_WR_REG(u8 dat);
 void LCD_Address_Set(u16 x1, u16 y1, u16 x2, u16 y2);
 void LCD_Init(void);
 
+void LCD_Set_BL_Light(int light_intensity);
+int LCD_Get_BL_Light(void);
 void LCD_Writ_Bus(u8 dat);
 #endif

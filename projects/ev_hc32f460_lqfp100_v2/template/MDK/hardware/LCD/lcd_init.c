@@ -1,5 +1,95 @@
 #include "lcd_init.h"
 
+#define TMRA_UNIT                       (CM_TMRA_4)
+#define TMRA_PERIPH_CLK                 (FCG2_PERIPH_TMRA_4)
+#define TMRA_PWM_CH                     (TMRA_CH2)
+
+#define TMRA_PWM_PORT                   (GPIO_PORT_B)
+#define TMRA_PWM_PIN                    (GPIO_PIN_07)
+#define TMRA_PWM_PIN_FUNC               (GPIO_FUNC_4)
+
+#define TMRA_MD                         (TMRA_MD_SAWTOOTH)
+#define TMRA_DIR                        (TMRA_DIR_UP)
+#define TMRA_PERIOD_VAL                 (5000U - 1U)
+#define TMRA_PWM_CMP_VAL                (2500U - 1U)
+
+#define TMRA_PWM_CMP_MAX   ((uint16_t)(TMRA_PERIOD_VAL - 1U))
+
+static void LCD_BL_Init()
+{
+    stc_tmra_init_t stcTmraInit;
+    stc_tmra_pwm_init_t stcPwmInit;
+
+    /* 1. Enable TimerA peripheral clock. */
+    FCG_Fcg2PeriphClockCmd(TMRA_PERIPH_CLK, ENABLE);
+
+    /* 2. Set a default initialization value for stcTmraInit. */
+    (void)TMRA_StructInit(&stcTmraInit);
+
+    /* 3. Modifies the initialization values depends on the application. */
+    stcTmraInit.sw_count.u8CountMode = TMRA_MD;
+    stcTmraInit.sw_count.u8CountDir  = TMRA_DIR;
+    stcTmraInit.u32PeriodValue = TMRA_PERIOD_VAL;
+    (void)TMRA_Init(TMRA_UNIT, &stcTmraInit);
+
+    /* 4. Set the comparison reference value. */
+    (void)TMRA_PWM_StructInit(&stcPwmInit);
+//		stcPwmInit.u16StartPolarity = TMRA_PWM_HIGH;
+//		stcPwmInit.u16StopPolarity = TMRA_PWM_LOW;
+		stcPwmInit.u16CompareMatchPolarity = TMRA_PWM_LOW;
+		stcPwmInit.u16PeriodMatchPolarity = TMRA_PWM_HIGH;
+		
+    stcPwmInit.u32CompareValue = TMRA_PWM_CMP_VAL;
+    GPIO_SetFunc(TMRA_PWM_PORT, TMRA_PWM_PIN, TMRA_PWM_PIN_FUNC);
+    (void)TMRA_PWM_Init(TMRA_UNIT, TMRA_PWM_CH, &stcPwmInit);
+    TMRA_PWM_OutputCmd(TMRA_UNIT, TMRA_PWM_CH, ENABLE);
+		
+		//TMRA_CompareBufCmd(TMRA_UNIT, TMRA_PWM_CH, ENABLE);
+		//TMRA_SetCompareBufCond(TMRA_UNIT, TMRA_PWM_CH, TMRA_BUF_TRANS_COND_OVF_UDF_CLR);
+		
+		
+		//TMRA_SetCompareValue(TMRA_UNIT, TMRA_PWM_CH, 0);
+}
+void LCD_Set_BL_Light(int light_intensity)
+{
+    uint16_t cmp;
+
+    if (light_intensity <= 0)
+    {
+        cmp = 0;
+    }
+    else if (light_intensity >= 100)
+    {
+        cmp = TMRA_PWM_CMP_MAX;
+    }
+    else
+    {
+        cmp = (uint16_t)((uint32_t)light_intensity * TMRA_PWM_CMP_MAX / 100U);
+    }
+
+    TMRA_SetCompareValue(TMRA_UNIT, TMRA_PWM_CH, cmp);
+}
+
+int LCD_Get_BL_Light(void)
+{
+    uint16_t cmp;
+    int light;
+
+    /* CMP 实际是 16 位寄存器 */
+    cmp = (uint16_t)TMRA_GetCompareValue(TMRA_UNIT, TMRA_PWM_CH);
+
+    /* 裁剪到硬件合法范围 */
+    if (cmp >= (TMRA_PERIOD_VAL - 1U))
+    {
+        cmp = (uint16_t)(TMRA_PERIOD_VAL - 1U);
+    }
+
+    /* 0-(PERIOD-1) 映射回 0-100 */
+    light = (int)((uint32_t)cmp * 100U / (TMRA_PERIOD_VAL - 1U));
+
+    return light;
+}
+
 /* 如果你后面要做 DMA 加速填充，可以在这里扩展
    目前先给一个空实现，不影响功能 */
 void LCD_DMA_Init(void)
@@ -20,13 +110,17 @@ void LCD_GPIO_Init(void)
     (void)GPIO_Init(LCD_CS_PORT,  LCD_CS_PIN,  &stcGpioInit);
     (void)GPIO_Init(LCD_DC_PORT,  LCD_DC_PIN,  &stcGpioInit);
     (void)GPIO_Init(LCD_RST_PORT, LCD_RST_PIN, &stcGpioInit);
-    (void)GPIO_Init(LCD_BL_PORT,  LCD_BL_PIN,  &stcGpioInit);
-
+    //(void)GPIO_Init(LCD_BL_PORT,  LCD_BL_PIN,  &stcGpioInit);
+		LCD_BL_Init();
+	
     /* 默认电平 */
     LCD_CS_Set();
     LCD_DC_Set();
     LCD_RES_Set();
-    LCD_BLK_Set();
+		//LCD_Set_BL_Light(2);
+	
+		TMRA_Start(TMRA_UNIT);
+    //LCD_BLK_Set();
 }
 
 /* 通过 SPI3 发送 1 字节（阻塞） */

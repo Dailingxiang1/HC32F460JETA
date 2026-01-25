@@ -67,6 +67,8 @@ static void BSP_CLK_Init(void);
 static void LCD_SPI_Config(void);
 
 volatile uint8_t g_dma_transfer_complete = 0;
+static uint8_t lcd_bl_light = 50;
+
 
 static void DMA_TransCompleteCallback(void)
 {
@@ -104,9 +106,9 @@ void On_Borad_Peripheral_Init()
 		stcGpioInit.u16PinDir = PIN_DIR_OUT;
 		
 		LED_Init();
-		MOTOR_Init();
-		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
-		GPIO_Init(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN, &stcGpioInit);
+		//MOTOR_Init();
+//		GPIO_Init(LCD_BL_PORT, LCD_BL_PIN, &stcGpioInit);
+//		GPIO_Init(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN, &stcGpioInit);
 	
 		/* 按键初始化 */
 		stcGpioInit.u16PullUp = PIN_PU_ON;
@@ -138,13 +140,45 @@ uint8_t read_button_gpio(uint8_t button_id)
 
 void left1_btn_single_click_callback(Button* btn_handle)
 {
-		GPIO_TogglePins(ON_BOARD_LED_PORT, ON_BOARD_LED_PIN);
+//    int light;
+
+//    (void)btn_handle;  /* 如果暂时没用到，防止编译告警 */
+
+//    light = LCD_Get_BL_Light();
+//    light += 10;
+
+//    if (light > 100)
+//    {
+//        light = 100;
+//    }
+
+//    LCD_Set_BL_Light(light);
+//			TMRA_Stop(CM_TMRA_4);
+			//TMRA_PWM_OutputCmd(CM_TMRA_4, TMRA_CH2, DISABLE) ;
+			TMRA_SetCountValue(CM_TMRA_4, 1UL);
+			TMRA_SetCompareValue(CM_TMRA_4, TMRA_CH2, 4000);
+			//TMRA_PWM_OutputCmd(CM_TMRA_4, TMRA_CH2, ENABLE) ;
+//			TMRA_Start(CM_TMRA_4);
 }
+
 
 void left1_btn_double_click_callback(Button* btn_handle)
 {
-		GPIO_TogglePins(ON_BOARD_MOTOR_PORT, ON_BOARD_MOTOR_PIN);
+    int light;
+
+    (void)btn_handle;
+
+    light = LCD_Get_BL_Light();
+    light -= 10;
+
+    if (light < 0)
+    {
+        light = 0;
+    }
+
+    LCD_Set_BL_Light(light);
 }
+
 
 /**
  * @brief  简单的 UI 测试函数：在屏幕中间显示一行字
@@ -190,12 +224,13 @@ int32_t main(void)
 		//LCD_Init();
 		lv_init();                                 
 		lv_port_disp_init();
+		TMRA_Start(CM_TMRA_4);
 		//lv_example_hello_world();
 		DA213_Init();
 
 		//lv_demo_music();
 		lv_example_bouncing_ball();
-		LL_PERIPH_WP(LL_PERIPH_ALL);
+		//LL_PERIPH_WP(LL_PERIPH_ALL);
 
 		//multiTimerInstall();
 		button_init(&left_bnt1, read_button_gpio, 1, 1);
@@ -237,6 +272,8 @@ int32_t main(void)
 		short acc_x, acc_y, acc_z;
 		char temp_buff[21];
 		uint32_t last_update_ms = 0;
+		
+		
     /* Add your code here */
     for (;;) {
     uint32_t now = SysTick_GetTick();  // 获取当前系统毫秒
