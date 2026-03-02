@@ -22,12 +22,35 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 D:\MyProject\XHSC\HC32F460JETA\projects\ev_hc32f460_lqfp100_v2\template\MDK\template.uvprojx
-Project File Date:  01/25/2026
+Project File Date:  03/02/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Software\Keil MDK\ARM\ARMCC\Bin'
 Build target 'template_Debug'
-".\output\debug\template.axf" - 0 Error(s), 0 Warning(s).
+compiling BATTERY.c...
+hardware\BATTERY\BATTERY.h(6): warning:  #1295-D: Deprecated declaration Battery_Init - give arg types
+  void Battery_Init();
+hardware\BATTERY\BATTERY.c(102): warning:  #1-D: last line of file ends without a newline
+  }
+hardware\BATTERY\BATTERY.c(63): warning:  #550-D: variable "u16AdcValue"  was set but never used
+  static uint16_t u16AdcValue;
+hardware\BATTERY\BATTERY.c: 3 warnings, 0 errors
+compiling main.c...
+.\hardware\LED\LED.h(6): warning:  #1295-D: Deprecated declaration LED_Init - give arg types
+  void LED_Init();
+.\hardware\BATTERY\BATTERY.h(6): warning:  #1295-D: Deprecated declaration Battery_Init - give arg types
+  void Battery_Init();
+.\lvgl\Demo\lv_demo_ball.h(1): warning:  #1-D: last line of file ends without a newline
+  void lv_example_bouncing_ball(void);
+..\source\main.c(270): warning:  #177-D: variable "temp_buff"  was declared but never referenced
+  		char temp_buff[21];
+..\source\main.c(71): warning:  #177-D: variable "lcd_bl_light"  was declared but never referenced
+  static uint8_t lcd_bl_light = 50;
+..\source\main.c: 5 warnings, 0 errors
+linking...
+Program Size: Code=147904 RO-data=15868 RW-data=364 ZI-data=106980  
+FromELF: creating hex file...
+".\output\debug\template.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +63,7 @@ Package Vendor: HDSC
   D:/Software/Keil MDK/Pack/HDSC/HC32F460/1.0.11/Device/Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

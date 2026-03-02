@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__DEBUG,HC32F460,USE_DDL_DRIVER,ROM_EXT_QSPI,LV_CONF_INCLUDE_SIMPLE,LV_LVGL_H_INCLUDE_SIMPLE,</Define>
               <Undefine></Undefine>
-              <IncludePath>../source;../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include;../../../../drivers/cmsis/Include;../../../../drivers/hc32_ll_driver/inc;.\hardware\LCD;.\hardware\DA213;.\picture;.\middleware\MultiButton;.\middleware\MultiTimer;.\lvgl;.\lvgl\src;.\lvgl\port;.\lvgl\Demo;.\lvgl\Demo\music;.\hardware\LED;.\hardware\MOTOR</IncludePath>
+              <IncludePath>../source;../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include;../../../../drivers/cmsis/Include;../../../../drivers/hc32_ll_driver/inc;.\hardware\LCD;.\hardware\DA213;.\picture;.\middleware\MultiButton;.\middleware\MultiTimer;.\lvgl;.\lvgl\src;.\lvgl\port;.\lvgl\Demo;.\lvgl\Demo\music;.\hardware\LED;.\hardware\MOTOR;.\hardware\BATTERY</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -546,6 +546,11 @@
               <FileName>MOTOR.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hardware\MOTOR\MOTOR.c</FilePath>
+            </File>
+            <File>
+              <FileName>BATTERY.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\BATTERY\BATTERY.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1976,6 +1981,11 @@
               <FileName>MOTOR.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hardware\MOTOR\MOTOR.c</FilePath>
+            </File>
+            <File>
+              <FileName>BATTERY.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hardware\BATTERY\BATTERY.c</FilePath>
             </File>
           </Files>
         </Group>

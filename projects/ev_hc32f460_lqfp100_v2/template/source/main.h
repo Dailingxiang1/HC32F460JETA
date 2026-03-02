@@ -87,6 +87,8 @@
 #define ADC_UNIT                        (CM_ADC1)
 #define ADC_PERIPH_CLK                  (FCG3_PERIPH_ADC1)
 
+#define ADC_CLK                         (CLK_PERIPHCLK_PCLK)
+
 #define ADC_CH_POTENTIOMETER            (ADC_CH0)
 #define ADC_CH                          (ADC_CH_POTENTIOMETER)
 #define ADC_CH_PORT                     (GPIO_PORT_A)

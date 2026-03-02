@@ -27,6 +27,7 @@
 #include "DA213.h"
 #include "LED.h"
 #include "Motor.h"
+#include "BATTERY.h"
 
 #include "stdio.h"
 #include "string.h"
@@ -140,25 +141,20 @@ uint8_t read_button_gpio(uint8_t button_id)
 
 void left1_btn_single_click_callback(Button* btn_handle)
 {
-//    int light;
+    int light;
 
-//    (void)btn_handle;  /* 如果暂时没用到，防止编译告警 */
+    (void)btn_handle;  /* 如果暂时没用到，防止编译告警 */
 
-//    light = LCD_Get_BL_Light();
-//    light += 10;
+    light = LCD_Get_BL_Light();
+    light += 10;
 
-//    if (light > 100)
-//    {
-//        light = 100;
-//    }
+    if (light > 100)
+    {
+        light = 100;
+    }
 
-//    LCD_Set_BL_Light(light);
-//			TMRA_Stop(CM_TMRA_4);
-			//TMRA_PWM_OutputCmd(CM_TMRA_4, TMRA_CH2, DISABLE) ;
-			TMRA_SetCountValue(CM_TMRA_4, 1UL);
-			TMRA_SetCompareValue(CM_TMRA_4, TMRA_CH2, 4000);
-			//TMRA_PWM_OutputCmd(CM_TMRA_4, TMRA_CH2, ENABLE) ;
-//			TMRA_Start(CM_TMRA_4);
+    LCD_Set_BL_Light(light);
+
 }
 
 
@@ -217,6 +213,7 @@ int32_t main(void)
 	
 		SysTick_Init(1000);
 	
+		Battery_Init();
 		On_Borad_Peripheral_Init();
 	
 		LCD_SPI_Config();
@@ -284,7 +281,7 @@ int32_t main(void)
 
         // 读取传感器
         DA213_Read_XYZ(&acc_x, &acc_y, &acc_z);
-
+				AdcPolling();
         // 更新 LVGL 的标签文本
         lv_label_set_text_fmt(label_chip, "chip: 0x%02X", chip_id);
         lv_label_set_text_fmt(label_accx, "acc X: %d", acc_x);

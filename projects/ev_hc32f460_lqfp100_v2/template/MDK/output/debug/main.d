@@ -37,6 +37,7 @@
 .\output\debug\main.o: .\hardware\DA213\DA213.h
 .\output\debug\main.o: .\hardware\LED\LED.h
 .\output\debug\main.o: .\hardware\MOTOR\Motor.h
+.\output\debug\main.o: .\hardware\BATTERY\BATTERY.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\stdio.h
 .\output\debug\main.o: D:\Software\Keil MDK\ARM\ARMCC\Bin\..\include\string.h
 .\output\debug\main.o: .\middleware\MultiTimer\MultiTimer.h
